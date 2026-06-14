@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>محاكي امتحان PMP الاحترافي</title>
+    <style>
+        :root {
+            --primary-color: #001f3f;
+            --secondary-color: #daa520;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .counter {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .timer {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #d9534f;
+            background: #fff5f5;
+            padding: 6px 18px;
+            border: 1px solid #d9534f;
+            border-radius: 20px;
+        }
+
+        .question-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #111;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 30px 0;
+        }
+
+        .options-list li {
+            margin-bottom: 12px;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            text-align: right;
+            background-color: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            background-color: #f0f4f8;
+            border-color: var(--primary-color);
+        }
+
+        .option-btn.selected {
+            background-color: #e6f0fa;
+            border-color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .btn-prev {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-prev:hover:not(:disabled) {
+            background-color: #5a6268;
+        }
+
+        .btn-next {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-next:hover {
+            background-color: #002d5c;
+        }
+
+        .btn-submit {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: #218838;
+        }
+
+        .nav-btn:disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+        }
+
+        /* أنماط واجهة التقارير والمراجعة الجديدة */
+        .results-container {
+            text-align: center;
+        }
+
+        .score-box {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 20px 0;
+            padding: 25px;
+            background: #eef5fc;
+            border-radius: 8px;
+            border: 1px solid #d0e3f7;
+        }
+
+        .review-section {
+            text-align: right;
+            margin-top: 40px;
+            border-top: 2px dashed #ccc;
+            padding-top: 30px;
+        }
+
+        .review-section-title {
+            font-size: 1.4rem;
+            color: #c9302c;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .review-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-right: 6px solid #d9534f;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .review-q-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #222;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .badge-wrong {
+            background-color: #fde8e8;
+            color: #9b1c1c;
+        }
+
+        .badge-unanswered {
+            background-color: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .review-option {
+            padding: 12px 15px;
+            margin-top: 8px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .wrong-choice {
+            background-color: #fdf2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .correct-choice {
+            background-color: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="quiz-app">
+        <div class="header-bar">
+            <div class="counter" id="question-counter">جاري التحميل...</div>
+            <div class="timer" id="time-display">04:00:00</div>
+        </div>
+
+        <div id="question-container">
+            <h2 class="question-title" id="question-text">جاري تحميل نص السؤال...</h2>
+            <ul class="options-list" id="options-space"></ul>
+        </div>
+
+        <div class="nav-controls">
+            <button class="nav-btn btn-prev" id="prev-btn" onclick="goPrevious()" disabled>السابق</button>
+            <button class="nav-btn btn-next" id="next-btn" onclick="goNext()">التالي</button>
+        </div>
+    </div>
+
+    <script src="questions.js"></script>
+
+    <script>
+        let currentIndex = 0;
+        let examDurationSeconds = 4 * 60 * 60; 
+        let timerInterval = null;
+        let userAnswers = [];
+
+        function startTimer() {
+            const display = document.getElementById('time-display');
+            
+            timerInterval = setInterval(() => {
+                if (examDurationSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert("انتهى وقت الامتحان الحقيقي! سيتم الانتقال للنتيجة.");
+                    finishExam();
+                    return;
+                }
+
+                examDurationSeconds--;
+                
+                let hours = Math.floor(examDurationSeconds / 3600);
+                let minutes = Math.floor((examDurationSeconds % 3600) / 60);
+                let seconds = examDurationSeconds % 60;
+
+                display.innerText = 
+                    (hours < 10 ? "0" + hours : hours) + ":" + 
+                    (minutes < 10 ? "0" + minutes : minutes) + ":" + 
+                    (seconds < 10 ? "0" + seconds : seconds);
+            }, 1000);
+        }
+
+        function renderQuestion() {
+            if (typeof questionsData === 'undefined' || questionsData.length === 0) return;
+
+            const currentQuestion = questionsData[currentIndex];
+            document.getElementById('question-counter').innerText = `السؤال ${currentIndex + 1} من ${questionsData.length}`;
+            document.getElementById('question-text').innerText = currentQuestion.question;
+            
+            const optionsSpace = document.getElementById('options-space');
+            optionsSpace.innerHTML = '';
+            
+            currentQuestion.options.forEach((optionText, index) => {
+                const li = document.createElement('li');
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = optionText;
+                
+                if (userAnswers[currentIndex] === index) {
+                    btn.classList.add('selected');
+                }
+                
+                btn.onclick = () => selectOption(index);
+                li.appendChild(btn);
+                optionsSpace.appendChild(li);
+            });
+
+            document.getElementById('prev-btn').disabled = (currentIndex === 0);
+            
+            const nextBtn = document.getElementById('next-btn');
+            if (currentIndex === questionsData.length - 1) {
+                nextBtn.innerText = "إنهاء وعرض النتيجة";
+                nextBtn.className = "nav-btn btn-submit";
+            } else {
+                nextBtn.innerText = "التالي";
+                nextBtn.className = "nav-btn btn-next";
+            }
+        }
+
+        function selectOption(selectedIndex) {
+            userAnswers[currentIndex] = selectedIndex;
+            renderQuestion(); 
+        }
+
+        function goNext() {
+            if (currentIndex < questionsData.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            } else {
+                if (confirm("هل أنت متأكد من رغبتك في إنهاء الامتحان ومراجعة النتيجة الإجمالية؟")) {
+                    finishExam();
+                }
+            }
+        }
+
+        function goPrevious() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        }
+
+        function finishExam() {
+            clearInterval(timerInterval);
+            let score = 0;
+            let unAnswered = 0; 
+            let reviewHtml = `<div class="review-section"><h3 class="review-section-title">تقرير تحليل الأخطاء والمراجعة الفنية:</h3>`;
+            let hasErrorsOrMissing = false;
+
+            questionsData.forEach((questionObj, index) => {
+                const userAnswer = userAnswers[index];
+                const correctAnswer = questionObj.answer;
+
+                if (userAnswer === correctAnswer) {
+                    score++;
+                } else {
+                    hasErrorsOrMissing = true;
+                    const isUnanswered = (userAnswer === null || userAnswer === undefined);
+                    if (isUnanswered) unAnswered++;
+
+                    const userChoiceText = isUnanswered ? "لم يتم الإجابة على هذا السؤال" : questionObj.options[userAnswer];
+                    const correctChoiceText = questionObj.options[correctAnswer];
+
+                    // بناء بطاقة مراجعة تفصيلية لكل خطأ برمجياً
+                    reviewHtml += `
+                        <div class="review-card">
+                            <div class="review-q-text">السؤال ${index + 1}: ${questionObj.question}</div>
+                            <div>
+                                <span class="status-badge ${isUnanswered ? 'badge-unanswered' : 'badge-wrong'}">
+                                    ${isUnanswered ? 'متروك بدون إجابة' : 'إجابة خاطئة'}
+                                </span>
+                            </div>
+                            ${!isUnanswered ? `<div class="review-option wrong-choice"><strong>إجابتك:</strong> ${userChoiceText}</div>` : ''}
+                            <div class="review-option correct-choice"><strong>الإجابة الصحيحة المعتمدة:</strong> ${correctChoiceText}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            reviewHtml += `</div>`;
+
+            // إذا أتم المستخدم الامتحان بشكل كامل وصحيح بنسبة 100%
+            if (!hasErrorsOrMissing) {
+                reviewHtml = `<div class="review-section"><p style="color: #28a745; font-weight: bold; text-align:center; font-size:1.2rem;">أداء مذهل! لقد أجبت على جميع الأسئلة بشكل صحيح تماماً.</p></div>`;
+            }
+
+            const appArea = document.getElementById('quiz-app');
+            appArea.innerHTML = `
+                <div class="results-container">
+                    <h2>تم اكتمال الامتحان بنجاح</h2>
+                    <div class="score-box">
+                        النتيجة النهائية: ${score} من ${questionsData.length}
+                    </div>
+                    <p style="font-size:1.25rem; margin-bottom: 10px;">
+                        نسبة النجاح الفعلية: <strong>${((score / questionsData.length) * 100).toFixed(1)}%</strong>
+                    </p>
+                    <p style="color: #666; font-size:1.05rem;">
+                        الأسئلة التي تُرِكت بدون إجابة: <span style="font-weight:bold; color:#f0ad4e;">${unAnswered}</span>
+                    </p>
+                    <button class="nav-btn btn-next" style="max-width:250px; margin:25px auto; display:block;" onclick="window.location.reload()">إعادة خوض الاختبار</button>
+                    
+                    ${reviewHtml}
+                </div>
+            `;
+            
+            // لضمان التمرير لأعلى الصفحة التلقائي لرؤية النتيجة أولاً
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onload = function() {
+            if (typeof questionsData !== 'undefined') {
+                userAnswers = new Array(questionsData.length).fill(null);
+                startTimer();
+                renderQuestion();
+            } else {
+                document.getElementById('question-counter').innerText = "خطأ نظام";
+                document.getElementById('question-text').innerText = "فشل تحميل الأسئلة. تأكد من وجود ملف questions.js السليم بجانب هذا الملف بنفس المجلد بنفس الاسم.";
+            }
+        };
+    </script>
+</body>
+</html>
